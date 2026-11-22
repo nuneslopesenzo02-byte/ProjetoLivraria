@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ProjetoLivraria.Models
+namespace Projeto_Livraria.Models
 {
     public class LoginViewModel
     {
