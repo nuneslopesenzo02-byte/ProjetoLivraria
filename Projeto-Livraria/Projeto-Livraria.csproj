@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <Folder Include="Views\Conta\" />
-    <Folder Include="Views\Login\" />
+    <Folder Include="Views\Livro\" />
   </ItemGroup>
 
 </Project>
