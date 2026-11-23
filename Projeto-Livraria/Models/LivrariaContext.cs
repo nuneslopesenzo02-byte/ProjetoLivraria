@@ -11,8 +11,8 @@ namespace Projeto_Livraria.Data
         {
         }
 
-        public DbSet<Login> Login { get; set; }
+        public DbSet<Logins> Login { get; set; }
 
-        public DbSet<Livro> Livro { get; set; }
+        public DbSet<Livros> Livro { get; set; }
     }
 }
