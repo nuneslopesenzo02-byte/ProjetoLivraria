@@ -12,9 +12,4 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer.Abstractions" Version="11.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Conta\" />
-    <Folder Include="Views\Login\" />
-  </ItemGroup>
-
 </Project>
