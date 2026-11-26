@@ -1,0 +1,47 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Projeto_Livraria.Data;
+using Projeto_Livraria.Models;
+
+namespace Projeto_Livraria.Controllers
+{
+    public class LivroController(LivrariaContext db) : Controller
+    {
+        [HttpGet]
+        public IActionResult Create()
+        {
+            if (HttpContext.Session.GetString("UsuarioNome") is null)
+            {
+                return RedirectToAction("Login", "Conta");
+            }
+
+            return View(new Livro());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Livro livro)
+        {
+            if (HttpContext.Session.GetString("UsuarioNome") is null)
+            {
+                return RedirectToAction("Login", "Conta");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(livro);
+            }
+
+            if (db.Livro.Any(l => l.Isbn == livro.Isbn))
+            {
+                ModelState.AddModelError(nameof(Livro.Isbn), "Já existe um livro com este ISBN.");
+                return View(livro);
+            }
+
+            db.Livro.Add(livro);
+            await db.SaveChangesAsync();
+
+            TempData["Mensagem"] = $"Livro \"{livro.Nome}\" cadastrado com sucesso.";
+            return RedirectToAction("Index", "Home");
+        }
+    }
+}
