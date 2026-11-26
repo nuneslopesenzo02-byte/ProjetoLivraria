@@ -23,7 +23,7 @@ namespace Projeto_Livraria.Controllers
                 return View(model);
             }
 
-            var usuario = await db.Logins.FirstOrDefaultAsync(u => u.Email == model.Email.Trim());
+            var usuario = await db.Login.FirstOrDefaultAsync(u => u.Email == model.Email.Trim());
 
             if (usuario is null ||
                 hasher.VerifyHashedPassword(usuario, usuario.SenhaHash, model.Senha) == PasswordVerificationResult.Failed)
@@ -34,6 +34,45 @@ namespace Projeto_Livraria.Controllers
 
             HttpContext.Session.SetString("UsuarioNome", usuario.Nome);
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult Cadastrar()
+        {
+            return View(new CadastroViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Cadastrar(CadastroViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var emailNormalizado = model.Email.Trim();
+
+            var emailJaExiste = await db.Login.AnyAsync(u => u.Email == emailNormalizado);
+            if (emailJaExiste)
+            {
+                ModelState.AddModelError("Email", "Este e-mail já está cadastrado.");
+                return View(model);
+            }
+
+            var novoUsuario = new Login
+            {
+                Nome = model.Nome.Trim(),
+                Email = emailNormalizado
+            };
+
+            novoUsuario.SenhaHash = hasher.HashPassword(novoUsuario, model.Senha);
+
+            db.Login.Add(novoUsuario);
+            await db.SaveChangesAsync();
+
+            TempData["MensagemSucesso"] = "Conta criada com sucesso! Faça seu login.";
+            return RedirectToAction("Login");
         }
 
         public IActionResult Sair()
